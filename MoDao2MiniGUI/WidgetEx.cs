@@ -22,5 +22,20 @@ namespace MoDao2MiniGUI
                 return childrens?.FirstOrDefault()?.text;
             }
         }
+        public static TextChildren GetTextChildren(this widget wt)
+        {
+            string txt = wt.text?.Value as string;
+            if (string.IsNullOrEmpty(txt))
+            {
+                return null;
+            }
+            else
+            {
+
+                var ja = Newtonsoft.Json.JsonConvert.DeserializeObject(txt) as Newtonsoft.Json.Linq.JArray;
+                var childrens = (ja.FirstOrDefault()?.ToObject(typeof(TextObject)) as TextObject)?.children;
+                return childrens?.FirstOrDefault();
+            }
+        }
     }
 }
