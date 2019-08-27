@@ -11,20 +11,23 @@ namespace MoDao2MiniGUI
     {
         static void Main(string[] args)
         {
+            var aaa = "";
+            var oj= Newtonsoft.Json.JsonConvert.DeserializeObject(aaa);
+
             if (args.Length > 0) Console.WriteLine("请输入墨刀路径");
             string modaodir = args.Length > 0 ? args[0] : Console.ReadLine();
             Console.WriteLine("墨刀路径" + modaodir);
-            string modaoindex = System.IO.Path.Combine(modaodir, "index.html");
+            string modaoindex = System.IO.Path.Combine(modaodir, "data/project.js");
             if (!System.IO.File.Exists(modaoindex))
             {
-                Console.WriteLine("未找到index.html");
+                Console.WriteLine("未找到data/project.js");
             }
             else
             {
                 string indexhtml = System.IO.File.ReadAllText(modaoindex);
-                string mbdatatag = "<script>window.MBData=";
+                string mbdatatag = "window.MBData =";
                 string jsontemplates = indexhtml.Substring(indexhtml.IndexOf(mbdatatag) + mbdatatag.Length);
-                JObject jObject=JObject.Parse( jsontemplates.Remove(jsontemplates.IndexOf("</script>")));
+                JObject jObject=JObject.Parse( jsontemplates);
                 var objs = jObject["widgets"].ToArray();
       
                 string[] keynames = Properties.Resources.KeyName.Split('\r', '\n');
@@ -38,7 +41,7 @@ namespace MoDao2MiniGUI
                     var idname = keyname.Any() ? keyname.FirstOrDefault().Split(new char[] { ' ', (char)160 }, StringSplitOptions.RemoveEmptyEntries)[1] : string.Empty;
                     if (string.IsNullOrEmpty(idname))
                     {
-
+                        idname = wt.display_name.ToUpper();
                     }
                     switch (wt.name)
                     {
@@ -46,18 +49,32 @@ namespace MoDao2MiniGUI
 
                             break;
                         case "button":
-
-                            string buttoncode = $"{{CTRL_BUTTON, WS_VISIBLE | BS_PUSHBUTTON | WS_TABSTOP, {wt.left}, {wt.top}, {wt.width}, {wt.height}, ID_{idname}, \"{wt.text}\",0 }}";
-                            string keyvalue = Properties.Resources.KEYMAP_CT.Substring(Properties.Resources.KEYMAP_CT.IndexOf(idname));
-                            keyvalue = keyvalue.Substring(keyvalue.IndexOf("=<")+2, keyvalue.IndexOf(">") - keyvalue.IndexOf("=<")-2);
-                            ctlcode.Add(buttoncode);
-                            ctlids.Add($"#define ID_{idname} {1000+int.Parse( keyvalue)}");
+                            {
+                                string buttoncode = $"{{CTRL_BUTTON, WS_VISIBLE | BS_PUSHBUTTON | WS_TABSTOP, {wt.left}, {wt.top}, {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
+                                string keyvalue = Properties.Resources.KEYMAP_CT.Substring(Properties.Resources.KEYMAP_CT.IndexOf(idname));
+                                keyvalue = keyvalue.Substring(keyvalue.IndexOf("=<") + 2, keyvalue.IndexOf(">") - keyvalue.IndexOf("=<") - 2);
+                                ctlcode.Add(buttoncode);
+                                ctlids.Add($"#define ID_{idname} {1000 + int.Parse(keyvalue)}");
+                            }
                             break;
                         case "label":
-                            string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | SS_CENTER, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{wt.cid}, \"{wt.text}\",0 }}";
-                            ctlcode.Add(lablecode);
-                            labelcount++;
-                            ctlids.Add($"#define ID_{wt.cid} {1200 + labelcount}");
+                            {
+                                string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | SS_CENTER, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
+                                ctlcode.Add(lablecode);
+                                labelcount++;
+                                ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+                            }
+                            break;
+                        case "rich_text":
+                            {
+                                string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | SS_CENTER, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
+                                ctlcode.Add(lablecode);
+                                labelcount++;
+                                ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+                            }
+                            break;
+                        case "rounded_rect":
+
                             break;
                         default:
                             Console.WriteLine(wt.name);
@@ -83,13 +100,14 @@ namespace MoDao2MiniGUI
                 code += "};";
 
 
-
+                System.IO.File.WriteAllText("MiniGUI_AppUI.h", code, Encoding.GetEncoding(936));
             }
         }
 
         private static bool Check(widget wt, string st)
         {
-            return !string.IsNullOrEmpty(st) && wt != null && !string.IsNullOrEmpty(wt.text) && st.Trim().Split(new char[] { ' ', (char)160 }, StringSplitOptions.RemoveEmptyEntries)[0].Equals(wt.text.Replace(" ", "").Replace("" + (char)160, "").Trim());
+            return !string.IsNullOrEmpty(st) && wt != null && !string.IsNullOrEmpty(wt.GetText()) && st.Trim().Split(new char[] { ' ', (char)160 }, StringSplitOptions.RemoveEmptyEntries)[0].Equals(wt.GetText().Replace(" ", "").Replace("" + (char)160, "").Trim());
         }
+     
     }
 }
