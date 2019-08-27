@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoDao2MiniGUI", "MoDao2MiniGUI\MoDao2MiniGUI.csproj", "{FCC05D36-8CD1-4E1F-B8CD-1205A03B267B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FCC05D36-8CD1-4E1F-B8CD-1205A03B267B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCC05D36-8CD1-4E1F-B8CD-1205A03B267B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCC05D36-8CD1-4E1F-B8CD-1205A03B267B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCC05D36-8CD1-4E1F-B8CD-1205A03B267B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EB56FCDE-FAD4-480A-B348-3B64D389D392}
+	EndGlobalSection
+EndGlobal
