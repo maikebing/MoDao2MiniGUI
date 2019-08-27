@@ -81,7 +81,7 @@ namespace MoDao2MiniGUI
                             break;
                     }
                 }
-                string code = "";
+                string code = "#ifndef _APPUI_H_\r\n#define _APPUI_H_\r\n";
                 foreach (var item in ctlids)
                 {
                     code += item + "\r\n";
@@ -97,10 +97,10 @@ namespace MoDao2MiniGUI
                         code += ",";
                     }
                 }
-                code += "};";
+                code += "};\r\n#endif";
 
 
-                System.IO.File.WriteAllText("MiniGUI_AppUI.h", code, Encoding.GetEncoding(936));
+                System.IO.File.WriteAllText("appui.h", code, Encoding.GetEncoding(936));
             }
         }
 
