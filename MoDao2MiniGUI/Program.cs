@@ -32,6 +32,7 @@ namespace MoDao2MiniGUI
 
                 string[] keynames = Properties.Resources.KeyName.Split('\r', '\n');
                 List<string> ctlcode = new List<string>();
+                List<string> imgcode = new List<string>();
                 List<string> ctlids = new List<string>();
                 int labelcount = 0;
                 List<string> ctldatas = new List<string>();
@@ -58,7 +59,8 @@ namespace MoDao2MiniGUI
                             break;
                         case "label":
                             {
-                                string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | SS_CENTER, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
+                                string ss = wt.ha == "left" ? "SS_LEFT" : (wt.ha == "right" ? "SS_RIGHT" : "SS_CENTER");
+                                string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | {ss}, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
                                 ctlcode.Add(lablecode);
                                 labelcount++;
                                 ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
@@ -68,7 +70,8 @@ namespace MoDao2MiniGUI
                             break;
                         case "rich_text":
                             {
-                                string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | SS_CENTER, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
+                                string ss = wt.ha == "left" ? "SS_LEFT": (wt.ha == "right"? "SS_RIGHT" : "SS_CENTER");
+                                string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | {ss} , {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
                                 ctlcode.Add(lablecode);
                                 labelcount++;
                                 ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
@@ -78,6 +81,20 @@ namespace MoDao2MiniGUI
                             }
                             break;
                         case "image_view":
+                            {//{ID_IMGCARETC,       SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE,747,55,    {0,0,42, 29},1, "", 0, &si_on_off},
+                                if (wt.display_name == "imgBackgroup")
+                                {
+                                   //忽略
+                                }
+                                else
+                                {
+                                    string lablecode = $"{{ ID_{idname},SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE, {wt.left},{wt.top},{{0,0,{wt.width}, {wt.height}}},1, \"\", 0, &si_on_off}}";
+                                    imgcode.Add(lablecode);
+                                    labelcount++;
+                                    ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+                                }
+                            }
+                            break;
                         case "rounded_rect":
                             {
                                 string lablecode = $"{{CTRL_STATIC, WS_CHILD | SS_GROUPBOX | WS_VISIBLE, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
@@ -110,6 +127,19 @@ namespace MoDao2MiniGUI
                         code += ",";
                     }
                 }
+                code += "};\r\n";
+                code += "static skin_item_t _dev_status_show_items[] = \r\n{";
+                for (int i = 0; i < imgcode.Count; i++)
+                {
+                    code += "\r\n";
+                    code += imgcode[i];
+                    if (i + 1 < imgcode.Count)
+                    {
+                        code += ",";
+                    }
+                }
+
+
                 code += "};\r\n" +
                     ctldatas.ToArray().ToString() +
                     "#endif";
