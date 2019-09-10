@@ -17,9 +17,16 @@ namespace MoDao2MiniGUI
             else
             {
 
-                var ja = Newtonsoft.Json.JsonConvert.DeserializeObject(txt) as Newtonsoft.Json.Linq.JArray;
-              var  childrens = (ja.FirstOrDefault()?.ToObject(typeof(TextObject)) as TextObject)?.children;
-                return childrens?.FirstOrDefault()?.text;
+                try
+                {
+                    var ja = Newtonsoft.Json.JsonConvert.DeserializeObject(txt) as Newtonsoft.Json.Linq.JArray;
+                    var childrens = (ja.FirstOrDefault()?.ToObject(typeof(TextObject)) as TextObject)?.children;
+                    return childrens?.FirstOrDefault()?.text;
+                }
+                catch (Exception)
+                {
+                    return string.Empty;
+                }
             }
         }
         public static TextChildren GetTextChildren(this widget wt)
