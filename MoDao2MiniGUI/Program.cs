@@ -24,6 +24,7 @@ namespace MoDao2MiniGUI
             }
             else
             {
+                int sw = 0;
                 string indexhtml = System.IO.File.ReadAllText(modaoindex);
                 string mbdatatag = "window.MBData =";
                 string jsontemplates = indexhtml.Substring(indexhtml.IndexOf(mbdatatag) + mbdatatag.Length);
@@ -55,6 +56,7 @@ namespace MoDao2MiniGUI
                                 keyvalue = keyvalue.Substring(keyvalue.IndexOf("=<") + 2, keyvalue.IndexOf(">") - keyvalue.IndexOf("=<") - 2);
                                 ctlcode.Add(buttoncode);
                                 ctlids.Add($"#define ID_{idname} {1000 + int.Parse(keyvalue)}");
+                         
                             }
                             break;
                         case "label":
@@ -88,7 +90,8 @@ namespace MoDao2MiniGUI
                                 }
                                 else
                                 {
-                                    string lablecode = $"{{ ID_{idname},SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE, {wt.left},{wt.top},{{0,0,{wt.width}, {wt.height}}},1, \"\", 0, &si_on_off}}";
+                                    sw++;
+                                    string lablecode = $"{{ ID_{idname},SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE, {wt.left},{wt.top},{{0,0,{wt.width}, {wt.height}}},1, \"\", 0, &si_on_off{sw}}}";
                                     imgcode.Add(lablecode);
                                     labelcount++;
                                     ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
