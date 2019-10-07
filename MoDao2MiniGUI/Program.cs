@@ -35,6 +35,7 @@ namespace MoDao2MiniGUI
                 List<string> ctlcode = new List<string>();
                 List<string> imgcode = new List<string>();
                 List<string> ctlids = new List<string>();
+                List<string> sions = new List<string>();
                 int labelcount = 0;
                 List<string> ctldatas = new List<string>();
                 List<string> ctldatasfuzhi = new List<string>();
@@ -90,11 +91,11 @@ namespace MoDao2MiniGUI
                                 }
                                 else
                                 {
-                                    sw++;
-                                    string lablecode = $"{{ ID_{idname},SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE, {wt.left},{wt.top},{{0,0,{wt.width}, {wt.height}}},1, \"\", 0, &si_on_off{sw}}}";
+                                    string lablecode = $"{{ ID_{idname},SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE, {wt.left},{wt.top},{{0,0,{wt.width}, {wt.height}}},1, \"\", 0, &si_on_off_{idname}}}";
                                     imgcode.Add(lablecode);
                                     labelcount++;
                                     ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+                                    sions.Add($"static si_bmplabel_t si_on_off_{idname} = {{ \"0\",\"10\" }};");
                                 }
                             }
                             break;
@@ -116,6 +117,10 @@ namespace MoDao2MiniGUI
                 }
                 string code = "#ifndef _APPUI_H_\r\n#define _APPUI_H_\r\n";
                 foreach (var item in ctlids)
+                {
+                    code += item + "\r\n";
+                }
+                foreach (var item in sions)
                 {
                     code += item + "\r\n";
                 }
