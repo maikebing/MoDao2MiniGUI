@@ -1,19 +1,16 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace MoDao2MiniGUI
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var aaa = "";
-            var oj = Newtonsoft.Json.JsonConvert.DeserializeObject(aaa);
-
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             if (args.Length > 0) Console.WriteLine("请输入墨刀路径");
             string modaodir = args.Length > 0 ? args[0] : Console.ReadLine();
             Console.WriteLine("墨刀路径" + modaodir);
@@ -24,14 +21,14 @@ namespace MoDao2MiniGUI
             }
             else
             {
-                int sw = 0;
+                Console.WriteLine("正在读取json数据");
                 string indexhtml = System.IO.File.ReadAllText(modaoindex);
                 string mbdatatag = "window[\"hzv3\"][\"psol\"] =";
                 string jsontemplates = indexhtml.Substring(indexhtml.IndexOf(mbdatatag) + mbdatatag.Length);
-                jsontemplates = jsontemplates.TrimEnd(';',' ');
+                jsontemplates = jsontemplates.TrimEnd(';', ' ');
                 JArray jObject = JArray.Parse(jsontemplates);
                 var objs = jObject.SelectToken("[0].stateList[0].itemList").Children();
-
+                Console.WriteLine($"读取到{objs.Count()}个元素");
                 string[] keynames = Properties.Resources.KeyName.Split('\r', '\n');
                 List<string> ctlcode = new List<string>();
                 List<string> imgcode = new List<string>();
@@ -49,6 +46,7 @@ namespace MoDao2MiniGUI
                     {
                         idname = wt.display_name.ToUpper();
                     }
+                    Console.WriteLine($"正在处理{idname}");
                     switch (wt.name)
                     {
                         case "button":
@@ -58,9 +56,9 @@ namespace MoDao2MiniGUI
                                 keyvalue = keyvalue.Substring(keyvalue.IndexOf("=<") + 2, keyvalue.IndexOf(">") - keyvalue.IndexOf("=<") - 2);
                                 ctlcode.Add(buttoncode);
                                 ctlids.Add($"#define ID_{idname} {1000 + int.Parse(keyvalue)}");
-                         
                             }
                             break;
+
                         case "label":
                             {
                                 string ss = wt.ha == "left" ? "SS_LEFT" : (wt.ha == "right" ? "SS_RIGHT" : "SS_CENTER");
@@ -68,27 +66,27 @@ namespace MoDao2MiniGUI
                                 ctlcode.Add(lablecode);
                                 labelcount++;
                                 ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
-
-
                             }
                             break;
+
                         case "rich_text":
                             {
-                                string ss = wt.ha == "left" ? "SS_LEFT": (wt.ha == "right"? "SS_RIGHT" : "SS_CENTER");
+                                string ss = wt.ha == "left" ? "SS_LEFT" : (wt.ha == "right" ? "SS_RIGHT" : "SS_CENTER");
                                 string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | {ss} , {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
                                 ctlcode.Add(lablecode);
                                 labelcount++;
                                 ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
-                         //       var tc = wt.GetTextChildren();
+                                //       var tc = wt.GetTextChildren();
                                 //   ctldatas.Add($"static CTRLDATAExt  CTLExt_{idname} = {{ RGB(255, 255, 255),RGB(16, 16, 16) ,\"ttf\", \"msyh\",{tc.fontSize},FONT_WEIGHT_SUBPIXEL }};\r\n");
                                 // ctldatasfuzhi.Add($"GetCTLDataByID(ID_{idname})->dwAddData = (DWORD)&CTLExt_{idname};");
                             }
                             break;
+
                         case "image_view":
                             {//{ID_IMGCARETC,       SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE,747,55,    {0,0,42, 29},1, "", 0, &si_on_off},
                                 if (wt.display_name == "imgBackgroup")
                                 {
-                                   //忽略
+                                    //忽略
                                 }
                                 else
                                 {
@@ -100,6 +98,7 @@ namespace MoDao2MiniGUI
                                 }
                             }
                             break;
+
                         case "rounded_rect":
                             {
                                 string lablecode = $"{{CTRL_STATIC, WS_CHILD | SS_GROUPBOX | WS_VISIBLE, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
@@ -108,14 +107,15 @@ namespace MoDao2MiniGUI
                                 ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
                                 // var tc = wt.GetTextChildren();
                                 //   ctldatas.Add($"static CTRLDATAExt  CTLExt{idname} = {{ RGB(255, 255, 255),RGB(16, 16, 16) ,\"ttf\", \"msyh\",{tc.fontSize},FONT_WEIGHT_SUBPIXEL }};\r\n");
-
                             }
                             break;
+
                         default:
                             Console.WriteLine(wt.name);
                             break;
                     }
                 }
+                Console.WriteLine($"开始合成代码");
                 string code = "#ifndef _APPUI_H_\r\n#define _APPUI_H_\r\n";
                 foreach (var item in ctlids)
                 {
@@ -148,12 +148,10 @@ namespace MoDao2MiniGUI
                     }
                 }
 
-
                 code += "};\r\n" +
-                  string.Join("\r\n",   ctldatas.ToArray() ) +
+                  string.Join("\r\n", ctldatas.ToArray()) +
                     "#endif";
-
-
+                Console.WriteLine($"正在写入文件");
                 System.IO.File.WriteAllText("appui.h", code, Encoding.GetEncoding(936));
             }
         }
@@ -162,6 +160,5 @@ namespace MoDao2MiniGUI
         {
             return !string.IsNullOrEmpty(st) && wt != null && !string.IsNullOrEmpty(wt.GetText()) && st.Trim().Split(new char[] { ' ', (char)160 }, StringSplitOptions.RemoveEmptyEntries)[0].Equals(wt.GetText().Replace(" ", "").Replace("" + (char)160, "").Trim());
         }
-
     }
 }
