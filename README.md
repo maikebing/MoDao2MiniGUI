@@ -1,7 +1,26 @@
 # MoDao2MiniGUI
 是一个将https://modao.cc/ 生成的离线包生成MiniGUI代码的工具， 我们在实际工作中使用的是MiniGUI2.0.4 
-后期我们会逐步完善一些C的代码
-关键方法：
+后期我们会逐步完善一些C的代码。
+
+工具通过解析墨刀的json数据 ， 生成了 MiniGUI相对应控件的坐标 标题等等。 
+
+
+
+示例图:
+
+
+![modao](docs/modao.png)
+
+生成的代码参见
+
+ [appui.h](appui.h) 
+
+
+
+
+
+其中关键方法如下：
+
 
 ```c
 
