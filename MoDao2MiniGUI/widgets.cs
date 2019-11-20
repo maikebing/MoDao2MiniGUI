@@ -63,7 +63,7 @@ namespace MoDao2MiniGUI
         /// <summary>
         /// [{"paraSpacing":5,"children":[{"text":"收费站标题","boldType":0,"fontFamily":"SourceHanSansSC","fontWeight":"regular","fontSize":14,"color":"rgba(255, 255, 255, 1)","fontStyle":"normal","textDecoration":"none","lineHeight":21}]}]
         /// </summary>
-        public Newtonsoft.Json.Linq.JValue text { get; set; }
+        public Newtonsoft.Json.Linq.JToken text { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -111,7 +111,7 @@ namespace MoDao2MiniGUI
         /// <summary>
         /// 
         /// </summary>
-        public string text_shadow { get; set; }
+        public Newtonsoft.Json.Linq.JToken text_shadow { get; set; }
         /// <summary>
         /// 
         /// </summary>

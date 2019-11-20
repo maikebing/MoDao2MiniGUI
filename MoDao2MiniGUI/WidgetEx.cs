@@ -9,8 +9,9 @@ namespace MoDao2MiniGUI
     {
         public static string GetText(this widget wt)
         {
-            string txt = wt.text?.Value as string;
-            if (string.IsNullOrEmpty(txt))
+         
+            string txt = "";// wt.text?.Value as string;
+            if (wt.text==null || !wt.text.HasValues)
             {
                 return string.Empty;
             }
@@ -19,9 +20,8 @@ namespace MoDao2MiniGUI
 
                 try
                 {
-                    var ja = Newtonsoft.Json.JsonConvert.DeserializeObject(txt) as Newtonsoft.Json.Linq.JArray;
-                    var childrens = (ja.FirstOrDefault()?.ToObject(typeof(TextObject)) as TextObject)?.children;
-                    return childrens?.FirstOrDefault()?.text;
+
+                    return wt.text.SelectToken("[0].children[0].text").ToObject<string>();
                 }
                 catch (Exception)
                 {
@@ -31,7 +31,7 @@ namespace MoDao2MiniGUI
         }
         public static TextChildren GetTextChildren(this widget wt)
         {
-            string txt = wt.text?.Value as string;
+            string txt = "";// wt.text?.Value as string;
             if (string.IsNullOrEmpty(txt))
             {
                 return null;

@@ -17,19 +17,20 @@ namespace MoDao2MiniGUI
             if (args.Length > 0) Console.WriteLine("请输入墨刀路径");
             string modaodir = args.Length > 0 ? args[0] : Console.ReadLine();
             Console.WriteLine("墨刀路径" + modaodir);
-            string modaoindex = System.IO.Path.Combine(modaodir, "data/project.js");
+            string modaoindex = System.IO.Path.Combine(modaodir, "data.2.js");
             if (!System.IO.File.Exists(modaoindex))
             {
-                Console.WriteLine("未找到data/project.js");
+                Console.WriteLine("未找到data.2.js");
             }
             else
             {
                 int sw = 0;
                 string indexhtml = System.IO.File.ReadAllText(modaoindex);
-                string mbdatatag = "window.MBData =";
+                string mbdatatag = "window[\"hzv3\"][\"psol\"] =";
                 string jsontemplates = indexhtml.Substring(indexhtml.IndexOf(mbdatatag) + mbdatatag.Length);
-                JObject jObject = JObject.Parse(jsontemplates);
-                var objs = jObject["widgets"].ToArray();
+                jsontemplates = jsontemplates.TrimEnd(';',' ');
+                JArray jObject = JArray.Parse(jsontemplates);
+                var objs = jObject.SelectToken("[0].stateList[0].itemList").Children();
 
                 string[] keynames = Properties.Resources.KeyName.Split('\r', '\n');
                 List<string> ctlcode = new List<string>();
@@ -78,7 +79,7 @@ namespace MoDao2MiniGUI
                                 ctlcode.Add(lablecode);
                                 labelcount++;
                                 ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
-                                var tc = wt.GetTextChildren();
+                         //       var tc = wt.GetTextChildren();
                                 //   ctldatas.Add($"static CTRLDATAExt  CTLExt_{idname} = {{ RGB(255, 255, 255),RGB(16, 16, 16) ,\"ttf\", \"msyh\",{tc.fontSize},FONT_WEIGHT_SUBPIXEL }};\r\n");
                                 // ctldatasfuzhi.Add($"GetCTLDataByID(ID_{idname})->dwAddData = (DWORD)&CTLExt_{idname};");
                             }
@@ -149,7 +150,7 @@ namespace MoDao2MiniGUI
 
 
                 code += "};\r\n" +
-                    ctldatas.ToArray().ToString() +
+                  string.Join("\r\n",   ctldatas.ToArray() ) +
                     "#endif";
 
 
