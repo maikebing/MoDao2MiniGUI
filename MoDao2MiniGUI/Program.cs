@@ -61,21 +61,36 @@ namespace MoDao2MiniGUI
 
                         case "label":
                             {
-                                string ss = wt.ha == "left" ? "SS_LEFT" : (wt.ha == "right" ? "SS_RIGHT" : "SS_CENTER");
-                                string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | {ss}, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
-                                ctlcode.Add(lablecode);
-                                labelcount++;
-                                ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+                                if (idname.Contains(' '))
+                                {
+
+                                }
+                                else
+                                {
+                                    string ss = wt.ha == "left" ? "SS_LEFT" : (wt.ha == "right" ? "SS_RIGHT" : "SS_CENTER");
+                                    string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | {ss}, {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
+                                    ctlcode.Add(lablecode);
+                                    labelcount++;
+                                    ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+                                }
                             }
                             break;
 
                         case "rich_text":
                             {
-                                string ss = wt.ha == "left" ? "SS_LEFT" : (wt.ha == "right" ? "SS_RIGHT" : "SS_CENTER");
-                                string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | {ss} , {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
-                                ctlcode.Add(lablecode);
-                                labelcount++;
-                                ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+
+                                if (idname.Contains(' '))
+                                {
+
+                                }
+                                else
+                                {
+                                    string ss = wt.ha == "left" ? "SS_LEFT" : (wt.ha == "right" ? "SS_RIGHT" : "SS_CENTER");
+                                    string lablecode = $"{{CTRL_STATIC, WS_VISIBLE | {ss} , {wt.left},{wt.top},  {wt.width}, {wt.height}, ID_{idname}, \"{wt.GetText()}\",0 }}";
+                                    ctlcode.Add(lablecode);
+                                    labelcount++;
+                                    ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+                                }
                                 //       var tc = wt.GetTextChildren();
                                 //   ctldatas.Add($"static CTRLDATAExt  CTLExt_{idname} = {{ RGB(255, 255, 255),RGB(16, 16, 16) ,\"ttf\", \"msyh\",{tc.fontSize},FONT_WEIGHT_SUBPIXEL }};\r\n");
                                 // ctldatasfuzhi.Add($"GetCTLDataByID(ID_{idname})->dwAddData = (DWORD)&CTLExt_{idname};");
@@ -90,11 +105,18 @@ namespace MoDao2MiniGUI
                                 }
                                 else
                                 {
-                                    string lablecode = $"{{ ID_{idname},SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE, {wt.left},{wt.top},{{0,0,{wt.width}, {wt.height}}},1, \"\", 0, &si_on_off_{idname}}}";
-                                    imgcode.Add(lablecode);
-                                    labelcount++;
-                                    ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
-                                    sions.Add($"static si_bmplabel_t si_on_off_{idname} = {{ \"0\",\"10\" }};");
+                                    if (idname.Trim().Contains(' '))
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        string lablecode = $"{{ ID_{idname},SI_TYPE_BMPLABEL | SI_TEST_SHAPE_RECT | SI_STATUS_VISIBLE, {wt.left},{wt.top},{{0,0,{wt.width}, {wt.height}}},1, \"\", 0, &si_on_off_{idname}}}";
+                                        imgcode.Add(lablecode);
+                                        labelcount++;
+                                        ctlids.Add($"#define ID_{idname} {1200 + labelcount}");
+                                        sions.Add($"static si_bmplabel_t si_on_off_{idname} = {{ \"0\",\"10\" }};");
+                                    }
                                 }
                             }
                             break;
